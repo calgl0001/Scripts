@@ -1,0 +1,264 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/Sigma-3131/Scripts/main/Orion%20Optimized')))()
+local Window = OrionLib:MakeWindow({Name = "Heem! | Bedwars", HidePremium = false, IntroText = "Heem!", IntroIcon = "rbxassetid://7733799901", SaveConfig = true, ConfigFolder = "OrionTest"})
+--Tabs
+local CTab = Window:MakeTab({
+  Name = "Combat",
+  Icon = "rbxassetid://4483345998",
+  PremiumOnly = false
+})
+
+local BTab = Window:MakeTab({
+  Name = "Blatant",
+  Icon = "rbxassetid://4483345998",
+  PremiumOnly = false
+})
+
+local UTab = Window:MakeTab({
+  Name = "Utility",
+  Icon = "rbxassetid://4483345998",
+  PremiumOnly = false
+})
+
+local WTab = Window:MakeTab({
+  Name = "World",
+  Icon = "rbxassetid://4483345998",
+  PremiumOnly = false
+})
+--Sections
+local CSection = CTab:AddSection({
+  Name = "Options"
+})
+
+local BSection = BTab:AddSection({
+  Name = "Options"
+})
+
+local USection = UTab:AddSection({
+  Name = "Options"
+})
+
+local WSection = WTab:AddSection({
+  Name = "Options"
+})
+--Combat Tab
+local clickInterval = 0.1
+local clicking = false
+
+local function simulateClick()
+    local virtualUser = game:GetService("VirtualUser")
+    virtualUser:Button1Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+    virtualUser:Button1Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+end
+
+CTab:AddToggle({
+    Name = "Auto Clicker",
+    Default = false,
+    Callback = function(Value)
+        clicking = Value
+        if clicking then
+            while clicking do
+                simulateClick()
+                wait(clickInterval)
+            end
+        end
+    end    
+})
+
+local player = game.Players.LocalPlayer
+local mouse = player:GetMouse()
+local noclickdelayEnabled = false
+
+CTab:AddToggle({
+    Name = "No-ClickDelay",
+    Default = false,
+    Callback = function(Value)
+        noclickdelayEnabled = Value
+        if noclickdelayEnabled then
+            print("No Click Delay Enabled")
+            mouse.Button1Down:Connect(function()
+                for _, obj in pairs(workspace:GetDescendants()) do
+                    if obj:IsA("ClickDetector") then
+                        obj.MaxActivationDistance = math.huge
+                        obj.MouseClick:Fire(player)
+                    end
+                end
+            end)
+        else
+            print("No Click Delay Disabled")
+        end
+    end    
+})
+--Blatant Tab
+local clickInterval = 0.0
+local radius = 16
+local isClicking = false
+
+local function simulateClick()
+    local virtualUser = game:GetService("VirtualUser")
+    virtualUser:Button1Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+    virtualUser:Button1Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+end
+
+local function setInventoryToAvailableSword()
+    local player = game.Players.LocalPlayer
+    local username = player.Name
+    local replicatedStorage = game:GetService("ReplicatedStorage")
+    local swordNames = {
+        "emerald_sword",
+        "diamond_sword",
+        "iron_sword",
+        "stone_sword",
+        "wood_sword"
+    }
+
+    for _, swordName in ipairs(swordNames) do
+        local sword = replicatedStorage:FindFirstChild("Inventories"):FindFirstChild(username):FindFirstChild(swordName)
+        if sword then
+            local args = {
+                [1] = {
+                    ["hand"] = sword
+                }
+            }
+            game:GetService("ReplicatedStorage").rbxts_include.node_modules:FindFirstChild("@rbxts").net.out._NetManaged.SetInvItem:InvokeServer(unpack(args))
+            return true
+        end
+    end
+
+    return false
+end
+
+local function findPlayerWithinRadius(radius)
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    if character then
+        local position = character.HumanoidRootPart.Position
+        for _, targetPlayer in pairs(game.Players:GetPlayers()) do
+            if targetPlayer ~= player and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                local targetPosition = targetPlayer.Character.HumanoidRootPart.Position
+                if (targetPosition - position).Magnitude <= radius then
+                    return true
+                end
+            end
+        end
+    end
+    return false
+end
+
+BTab:AddToggle({
+    Name = "Kill Aura",
+    Default = false,
+    Callback = function(Value)
+        isClicking = Value
+
+        if Value then
+            while isClicking do
+                if findPlayerWithinRadius(radius) then
+                    if setInventoryToAvailableSword() then
+                        simulateClick()
+                    end
+                end
+                wait(clickInterval)
+            end
+        end
+    end    
+})
+
+BTab:AddButton({
+  Name = "Inf Jump",
+  Callback = function()
+      local UserInputService = game:GetService("UserInputService")
+      local player = game.Players.LocalPlayer
+      local character = player.Character or player.CharacterAdded:Wait()
+      local humanoid = character:WaitForChild("Humanoid")
+
+      UserInputService.JumpRequest:Connect(function()
+          if humanoid and humanoid:GetState() ~= Enum.HumanoidStateType.Seated then
+      humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+          end
+      end)
+          print("button pressed")
+    end    
+})
+--Utility Tab
+UTab:AddSlider({
+    Name = "Walkspeed",
+    Min = 16,
+    Max = 25,
+    Default = 5,
+    Color = Color3.fromRGB(255,255,255),
+    Increment = 1,
+    ValueName = "WalkSpeed",
+    Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+    end    
+})
+
+UTab:AddSlider({
+    Name = "JumpPower",
+    Min = 50,
+    Max = 100,
+    Default = 5,
+    Color = Color3.fromRGB(255,255,255),
+    Increment = 1,
+    ValueName = "JumpPower",
+    Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+    end    
+})
+
+local player = game.Players.LocalPlayer
+local camera = workspace.CurrentCamera
+local FOVEnabled = false
+local currentFOV = 120
+
+UTab:AddToggle({
+    Name = "FOV Changer",
+    Default = false,
+    Callback = function(Value)
+        FOVEnabled = Value
+        if FOVEnabled then
+            camera.FieldOfView = currentFOV
+            print("FOV Adjustment Enabled, Current FOV: " .. currentFOV)
+        else
+            camera.FieldOfView = 70
+            print("FOV Adjustment Disabled, Reset to Default")
+        end
+    end    
+})
+
+UTab:AddSlider({
+    Name = "FOV Picker",
+    Min = 70,
+    Max = 120,
+    Default = 70,
+    Increment = 1,
+    ValueName = "FOV",
+    Callback = function(Value)
+        currentFOV = Value
+        if FOVEnabled then
+            camera.FieldOfView = currentFOV
+            print("FOV Set to: " .. currentFOV)
+        end
+    end    
+})
+--World Tab
+WTab:AddToggle({
+    Name = "Anti-Void",
+    Default = false,
+    Callback = function(state)
+        if state then
+            local part = Instance.new("Part")
+            part.Size = Vector3.new(5000, 1, 5000)
+            part.Position = Vector3.new(0, 10, 0)
+            part.Anchored = true
+            part.CanCollide = true
+            part.BrickColor = BrickColor.new("Bright red")
+            part.Material = Enum.Material.Neon
+            part.Parent = game.Workspace
+        else
+            if game.Workspace:FindFirstChild("Part") then
+                game.Workspace.Part:Destroy()
+            end
+        end
+    end
+})
