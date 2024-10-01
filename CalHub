@@ -1,0 +1,144 @@
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local gameId = game.PlaceId
+local gameName = game:GetService("MarketplaceService"):GetProductInfo(gameId).Name
+
+if gameId == 286090429 then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/calgl0001/Scripts/refs/heads/SigmaScripts/CalHubArsenal"))()
+elseif gameId == 17625359962 then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/calgl0001/Scripts/refs/heads/SigmaScripts/CalHubRivals"))()
+elseif gameId == 12355337193 then
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/calgl0001/Scripts/refs/heads/SigmaScripts/CalHubMVSD"))()
+elseif gameId == 2788229376 or gameName == "Da Hood [VC]" then
+    local ScreenGui = Instance.new("ScreenGui")
+    local MainFrame = Instance.new("Frame")
+    local TitleBar = Instance.new("Frame")
+    local TitleLabel = Instance.new("TextLabel")
+    local CloseButton = Instance.new("TextButton")
+    local ButtonFrame = Instance.new("Frame")
+    local DemomodeButton = Instance.new("TextButton")
+    local CalsGuiButton = Instance.new("TextButton")
+
+    ScreenGui.Name = "DaHoodLoader"
+    ScreenGui.Parent = Player:WaitForChild("PlayerGui")
+
+    MainFrame.Name = "MainFrame"
+    MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    MainFrame.Size = UDim2.new(0.3, 0, 0.4, 0)
+    MainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+    MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Parent = ScreenGui
+
+    TitleBar.Name = "TitleBar"
+    TitleBar.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    TitleBar.Size = UDim2.new(1, 0, 0, 40)
+    TitleBar.Parent = MainFrame
+
+    TitleLabel.Name = "TitleLabel"
+    TitleLabel.BackgroundTransparency = 1
+    TitleLabel.Size = UDim2.new(1, 0, 1, 0)
+    TitleLabel.Text = "Da Hood Loader"
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.TextScaled = true
+    TitleLabel.Parent = TitleBar
+
+    CloseButton.Name = "CloseButton"
+    CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    CloseButton.Size = UDim2.new(0, 30, 0, 30)
+    CloseButton.Position = UDim2.new(1, -35, 0, 5)
+    CloseButton.Text = "X"
+    CloseButton.Parent = TitleBar
+
+    ButtonFrame.Name = "ButtonFrame"
+    ButtonFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    ButtonFrame.Size = UDim2.new(1, 0, 1, -40)
+    ButtonFrame.Position = UDim2.new(0, 0, 0, 40)
+    ButtonFrame.Parent = MainFrame
+
+    DemomodeButton.Name = "DemomodeButton"
+    DemomodeButton.BackgroundColor3 = Color3.fromRGB(18, 42, 120)
+    DemomodeButton.Size = UDim2.new(0.45, 0, 0.2, 0)
+    DemomodeButton.Position = UDim2.new(0.05, 0, 0.1, 0)
+    DemomodeButton.Text = "Demomode"
+    DemomodeButton.Parent = ButtonFrame
+
+    CalsGuiButton.Name = "CalsGuiButton"
+    CalsGuiButton.BackgroundColor3 = Color3.fromRGB(18, 42, 120)
+    CalsGuiButton.Size = UDim2.new(0.45, 0, 0.2, 0)
+    CalsGuiButton.Position = UDim2.new(0.5, 0, 0.1, 0)
+    CalsGuiButton.Text = "Cal’s Da Hood GUI"
+    CalsGuiButton.Parent = ButtonFrame
+
+    CloseButton.MouseButton1Click:Connect(function()
+        ScreenGui:Destroy()
+    end)
+
+    DemomodeButton.MouseButton1Click:Connect(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/calgl0001/Demomode/main/Demomode.V2.4"))()
+    end)
+
+    CalsGuiButton.MouseButton1Click:Connect(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/calgl0001/CalsDHGui/refs/heads/main/CalsDHGui1"))()
+    end)
+
+    local dragging
+    local dragInput
+    local dragStart
+    local startPos
+
+    TitleBar.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = TitleBar.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    TitleBar.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and dragInput then
+            local delta = input.Position - dragStart
+            MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+
+    local function onCharacterAdded(character)
+        if ScreenGui then
+            ScreenGui.Parent = Player:WaitForChild("PlayerGui")
+        end
+    end
+
+    Player.CharacterAdded:Connect(onCharacterAdded)
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0.1, 0)
+    UICorner.Parent = MainFrame
+
+    local UICornerTitle = Instance.new("UICorner")
+    UICornerTitle.CornerRadius = UDim.new(0.1, 0)
+    UICornerTitle.Parent = TitleBar
+
+    local UICornerButtonFrame = Instance.new("UICorner")
+    UICornerButtonFrame.CornerRadius = UDim.new(0.1, 0)
+    UICornerButtonFrame.Parent = ButtonFrame
+
+    local UICornerDemomode = Instance.new("UICorner")
+    UICornerDemomode.CornerRadius = UDim.new(0.1, 0)
+    UICornerDemomode.Parent = DemomodeButton
+
+    local UICornerCalsGui = Instance.new("UICorner")
+    UICornerCalsGui.CornerRadius = UDim.new(0.1, 0)
+    UICornerCalsGui.Parent = CalsGuiButton
+end
