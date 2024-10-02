@@ -10,5 +10,4 @@ elseif gameId == 17625359962 then
 elseif gameId == 12355337193 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/calgl0001/Scripts/refs/heads/SigmaScripts/CalHubMVSD"))()
 elseif gameId == 2788229376 or gameName == "Da Hood [VC]" then
-loadstring(game:HttpGet("https://raw.githubusercontent.com/calgl0001/CalsDHGui/refs/heads/main/CalsDHGui1"))()
-end)
+loadstring(game:HttpGet(("https://raw.githubusercontent.com/calgl0001/CalsDHGui/refs/heads/main/CalsDHGui1")))()
